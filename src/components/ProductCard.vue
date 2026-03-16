@@ -9,23 +9,28 @@ defineProps<{
 
 <template>
   <div
-    class="border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-lg transition-shadow bg-white flex flex-col h-full"
+    class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-lg transition-all bg-white dark:bg-gray-800 flex flex-col h-full"
   >
     <div
-      class="h-48 w-full bg-gray-50 rounded mb-4 overflow-hidden flex items-center justify-center"
+      class="h-48 w-full bg-gray-50 dark:bg-gray-700 rounded mb-4 overflow-hidden flex items-center justify-center transition-colors"
     >
       <img :src="product.thumbnail" :alt="product.title" class="max-h-full object-contain" />
     </div>
 
-    <h2 class="text-lg font-bold text-gray-800 line-clamp-1" :title="product.title">
+    <h2
+      class="text-lg font-bold text-gray-800 dark:text-gray-100 line-clamp-1"
+      :title="product.title"
+    >
       {{ product.title }}
     </h2>
-    <p class="text-sm text-gray-500 mb-4 uppercase tracking-wide">
+    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wide">
       {{ product.category }}
     </p>
 
     <div class="mt-auto flex justify-between items-center">
-      <span class="text-2xl font-black text-emerald-600">${{ product.price }}</span>
+      <span class="text-2xl font-black text-emerald-600 dark:text-emerald-400"
+        >${{ product.price }}</span
+      >
       <RouterLink
         :to="`/product/${product.id}`"
         class="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"

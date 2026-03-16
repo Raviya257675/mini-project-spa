@@ -6,9 +6,27 @@ import ProductCard from '../components/ProductCard.vue'
 const productsList = ref<Product[]>([])
 const isLoading = ref(true)
 const searchQuery = ref('')
-const selectedCategory = ref('All') // This tracks which category button is clicked
+const selectedCategory = ref('All')
+
+// --- DARK MODE LOGIC ---
+const isDark = ref(localStorage.getItem('theme') === 'dark')
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  if (isDark.value) {
+    document.documentElement.classList.add('dark')
+    localStorage.setItem('theme', 'dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+    localStorage.setItem('theme', 'light')
+  }
+}
+// -----------------------
 
 onMounted(async () => {
+  // Check theme on load
+  if (isDark.value) document.documentElement.classList.add('dark')
+
   try {
     const response = await fetch('https://dummyjson.com/products')
     const data: ProductResponse = await response.json()
@@ -20,28 +38,21 @@ onMounted(async () => {
   }
 })
 
-// Automatically extract a unique list of categories from the products
 const uniqueCategories = computed(() => {
   const categories = productsList.value.map((p) => p.category)
   return ['All', ...new Set(categories)]
 })
 
-// Filter by BOTH Search Query AND the Selected Category
 const filteredProducts = computed(() => {
   let filtered = productsList.value
-
-  // 1. Filter by Category First
   if (selectedCategory.value !== 'All') {
     filtered = filtered.filter((product) => product.category === selectedCategory.value)
   }
-
-  // 2. Filter by Search Query Second
   if (searchQuery.value) {
     filtered = filtered.filter((product) =>
       product.title.toLowerCase().includes(searchQuery.value.toLowerCase()),
     )
   }
-
   return filtered
 })
 </script>
@@ -49,13 +60,26 @@ const filteredProducts = computed(() => {
 <template>
   <main class="p-8 max-w-7xl mx-auto">
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-      <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">E-Commerce Store</h1>
+      <div class="flex items-center gap-4">
+        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+          E-Commerce Store
+        </h1>
+
+        <button
+          @click="toggleTheme"
+          class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          title="Toggle Dark Mode"
+        >
+          {{ isDark ? '☀️ Light' : '🌙 Dark' }}
+        </button>
+      </div>
+
       <div class="relative w-full md:w-96">
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search products..."
-          class="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors"
         />
       </div>
     </div>
@@ -69,7 +93,7 @@ const filteredProducts = computed(() => {
           'px-4 py-2 rounded-full text-sm font-semibold capitalize transition-colors',
           selectedCategory === category
             ? 'bg-blue-600 text-white shadow-md'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+            : 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700',
         ]"
       >
         {{ category }}
@@ -80,7 +104,10 @@ const filteredProducts = computed(() => {
       Loading products...
     </div>
 
-    <div v-else-if="filteredProducts.length === 0" class="text-center py-12 text-gray-500">
+    <div
+      v-else-if="filteredProducts.length === 0"
+      class="text-center py-12 text-gray-500 dark:text-gray-400"
+    >
       No products found matching your filters.
     </div>
 
