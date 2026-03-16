@@ -26,11 +26,12 @@ defineProps<{
 
     <div class="mt-auto flex justify-between items-center">
       <span class="text-2xl font-black text-emerald-600">${{ product.price }}</span>
-      <button
+      <RouterLink
+        :to="`/product/${product.id}`"
         class="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"
       >
         Details
-      </button>
+      </RouterLink>
     </div>
   </div>
 </template>
