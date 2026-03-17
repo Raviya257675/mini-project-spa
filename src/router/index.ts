@@ -10,10 +10,15 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      // The ":id" part makes this URL dynamic!
       path: '/product/:id',
       name: 'product-detail',
       component: () => import('../views/ProductDetailView.vue'),
+    },
+    {
+      // NEW: The Cart Route
+      path: '/cart',
+      name: 'cart',
+      component: () => import('../views/CartView.vue'),
     },
   ],
 })

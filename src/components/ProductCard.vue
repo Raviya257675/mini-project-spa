@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { Product } from '../types'
+import { useCartStore } from '../stores/cart' // Import the brain!
 
-// This component receives one "Product" from the home page
 defineProps<{
   product: Product
 }>()
+
+const cartStore = useCartStore() // Initialize the brain
 </script>
 
 <template>
@@ -27,16 +29,25 @@ defineProps<{
       {{ product.category }}
     </p>
 
-    <div class="mt-auto flex justify-between items-center">
+    <div class="mt-auto flex justify-between items-center gap-2">
       <span class="text-2xl font-black text-emerald-600 dark:text-emerald-400"
         >${{ product.price }}</span
       >
-      <RouterLink
-        :to="`/product/${product.id}`"
-        class="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"
-      >
-        Details
-      </RouterLink>
+      <div class="flex gap-2">
+        <button
+          @click="cartStore.addToCart(product)"
+          class="bg-emerald-600 text-white px-3 py-2 rounded-md font-black hover:bg-emerald-700 transition-colors"
+          title="Add to Cart"
+        >
+          +
+        </button>
+        <RouterLink
+          :to="`/product/${product.id}`"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-blue-700 transition-colors"
+        >
+          Details
+        </RouterLink>
+      </div>
     </div>
   </div>
 </template>

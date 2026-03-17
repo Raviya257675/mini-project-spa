@@ -55,6 +55,8 @@ const filteredProducts = computed(() => {
   }
   return filtered
 })
+import { useCartStore } from '../stores/cart'
+const cartStore = useCartStore()
 </script>
 
 <template>
@@ -65,6 +67,12 @@ const filteredProducts = computed(() => {
           E-Commerce Store
         </h1>
 
+        <RouterLink
+          to="/cart"
+          class="px-4 py-2 rounded-lg bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 font-bold shadow-sm transition-colors hover:bg-emerald-200 dark:hover:bg-emerald-800"
+        >
+          🛒 Cart ({{ cartStore.totalItems }})
+        </RouterLink>
         <button
           @click="toggleTheme"
           class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
