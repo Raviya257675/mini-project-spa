@@ -2,11 +2,13 @@
 import { ref, onMounted, computed } from 'vue'
 import type { Product, ProductResponse } from '../types'
 import ProductCard from '../components/ProductCard.vue'
+import { useAuthStore } from '../stores/auth'
 
 const productsList = ref<Product[]>([])
 const isLoading = ref(true)
 const searchQuery = ref('')
 const selectedCategory = ref('All')
+const authStore = useAuthStore()
 
 // --- DARK MODE LOGIC ---
 const isDark = ref(localStorage.getItem('theme') === 'dark')
@@ -80,6 +82,20 @@ const cartStore = useCartStore()
         >
           {{ isDark ? '☀️ Light' : '🌙 Dark' }}
         </button>
+        <button
+          v-if="authStore.isAuthenticated"
+          @click="authStore.logout"
+          class="px-4 py-2 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 font-bold hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+        >
+          Log Out
+        </button>
+        <RouterLink
+          v-else
+          to="/login"
+          class="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors shadow-sm"
+        >
+          Log In
+        </RouterLink>
       </div>
 
       <div class="relative w-full md:w-96">
