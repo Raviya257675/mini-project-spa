@@ -3,12 +3,15 @@ import { ref, onMounted, computed } from 'vue'
 import type { Product, ProductResponse } from '../types'
 import ProductCard from '../components/ProductCard.vue'
 import { useAuthStore } from '../stores/auth'
+import { useCartStore } from '../stores/cart'
 
 const productsList = ref<Product[]>([])
 const isLoading = ref(true)
 const searchQuery = ref('')
 const selectedCategory = ref('All')
+
 const authStore = useAuthStore()
+const cartStore = useCartStore()
 
 // --- DARK MODE LOGIC ---
 const isDark = ref(localStorage.getItem('theme') === 'dark')
@@ -57,86 +60,125 @@ const filteredProducts = computed(() => {
   }
   return filtered
 })
-import { useCartStore } from '../stores/cart'
-const cartStore = useCartStore()
 </script>
 
 <template>
-  <main class="p-8 max-w-7xl mx-auto">
-    <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-      <div class="flex items-center gap-4">
-        <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-          E-Commerce Store
-        </h1>
+  <main class="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+    <nav
+      class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center py-6 px-4 md:px-8 border-b border-gray-200 dark:border-gray-800"
+    >
+      <h1
+        class="text-2xl md:text-3xl font-serif font-black tracking-widest text-gray-900 dark:text-white uppercase mb-4 lg:mb-0"
+      >
+        E-Buy
+      </h1>
 
-        <RouterLink
-          to="/cart"
-          class="px-4 py-2 rounded-lg bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 font-bold shadow-sm transition-colors hover:bg-emerald-200 dark:hover:bg-emerald-800"
-        >
-          🛒 Cart ({{ cartStore.totalItems }})
-        </RouterLink>
+      <div class="flex flex-wrap items-center justify-center gap-4 md:gap-6">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Search collection..."
+          class="w-40 md:w-48 pb-1 bg-transparent text-sm border-b border-gray-300 dark:border-gray-700 focus:border-black dark:focus:border-white outline-none dark:text-white transition-colors"
+        />
+
         <button
           @click="toggleTheme"
-          class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-yellow-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-          title="Toggle Dark Mode"
+          class="text-xs md:text-sm font-semibold tracking-widest uppercase hover:text-gray-500 dark:text-gray-300 transition-colors"
         >
-          {{ isDark ? '☀️ Light' : '🌙 Dark' }}
+          {{ isDark ? 'Light' : 'Dark' }}
         </button>
+        <RouterLink
+          to="/login"
+          v-if="!authStore.isAuthenticated"
+          class="text-xs md:text-sm font-semibold tracking-widest uppercase hover:text-gray-500 dark:text-gray-300 transition-colors"
+        >
+          Sign In
+        </RouterLink>
         <button
-          v-if="authStore.isAuthenticated"
+          v-else
           @click="authStore.logout"
-          class="px-4 py-2 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 font-bold hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+          class="text-xs md:text-sm font-semibold tracking-widest uppercase text-red-600 hover:text-red-400"
         >
           Log Out
         </button>
         <RouterLink
-          v-else
-          to="/login"
-          class="px-4 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors shadow-sm"
+          to="/cart"
+          class="text-xs md:text-sm font-semibold tracking-widest uppercase border-b-2 border-black dark:border-white pb-1 hover:text-gray-500 dark:text-gray-300"
         >
-          Log In
+          Cart ({{ cartStore.totalItems }})
         </RouterLink>
       </div>
+    </nav>
 
-      <div class="relative w-full md:w-96">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search products..."
-          class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors"
-        />
+    <div
+      class="relative w-full h-[60vh] md:h-[70vh] bg-gray-100 mb-16 overflow-hidden flex items-center justify-center group"
+    >
+      <img
+        src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop"
+        class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-1000"
+        alt="Fashion Model"
+      />
+      <div class="absolute inset-0 bg-black/40"></div>
+
+      <div class="relative z-10 text-center px-4 mt-8">
+        <p
+          class="text-white tracking-[0.3em] text-xs md:text-sm mb-4 uppercase font-semibold drop-shadow-md"
+        >
+          The New Collection
+        </p>
+        <h2
+          class="text-5xl md:text-8xl font-serif font-bold text-white uppercase tracking-tight drop-shadow-lg mb-8"
+        >
+          Dress Your<br />Elegance
+        </h2>
+        <button
+          class="bg-white text-black px-10 py-4 text-xs md:text-sm font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors duration-300"
+        >
+          Explore Now
+        </button>
       </div>
     </div>
 
-    <div v-if="!isLoading" class="flex flex-wrap gap-2 mb-8">
-      <button
-        v-for="category in uniqueCategories"
-        :key="category"
-        @click="selectedCategory = category"
-        :class="[
-          'px-4 py-2 rounded-full text-sm font-semibold capitalize transition-colors',
-          selectedCategory === category
-            ? 'bg-blue-600 text-white shadow-md'
-            : 'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700',
-        ]"
+    <div class="max-w-7xl mx-auto px-4 md:px-8 pb-16">
+      <div class="flex flex-col items-center mb-16">
+        <h3
+          class="text-2xl md:text-3xl font-serif font-bold mb-8 tracking-wide uppercase dark:text-white"
+        >
+          New Arrivals
+        </h3>
+        <div v-if="!isLoading" class="flex flex-wrap justify-center gap-3 md:gap-4">
+          <button
+            v-for="category in uniqueCategories"
+            :key="category"
+            @click="selectedCategory = category"
+            :class="[
+              'px-4 md:px-6 py-2 text-[10px] md:text-xs font-bold uppercase tracking-widest border transition-colors',
+              selectedCategory === category
+                ? 'bg-black text-white border-black dark:bg-white dark:text-black dark:border-white'
+                : 'bg-transparent text-gray-500 border-gray-300 hover:border-black dark:text-gray-400 dark:border-gray-700 dark:hover:border-white',
+            ]"
+          >
+            {{ category }}
+          </button>
+        </div>
+      </div>
+
+      <div
+        v-if="isLoading"
+        class="text-xl text-gray-500 font-serif italic text-center py-12 dark:text-gray-400"
       >
-        {{ category }}
-      </button>
-    </div>
+        Curating collection...
+      </div>
+      <div
+        v-else-if="filteredProducts.length === 0"
+        class="text-center py-12 text-gray-500 font-serif dark:text-gray-400"
+      >
+        No pieces found matching your criteria.
+      </div>
 
-    <div v-if="isLoading" class="text-xl text-blue-500 font-semibold flex justify-center py-12">
-      Loading products...
-    </div>
-
-    <div
-      v-else-if="filteredProducts.length === 0"
-      class="text-center py-12 text-gray-500 dark:text-gray-400"
-    >
-      No products found matching your filters.
-    </div>
-
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <ProductCard v-for="item in filteredProducts" :key="item.id" :product="item" />
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <ProductCard v-for="item in filteredProducts" :key="item.id" :product="item" />
+      </div>
     </div>
   </main>
 </template>
