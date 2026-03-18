@@ -87,6 +87,7 @@ const filteredProducts = computed(() => {
         >
           {{ isDark ? 'Light' : 'Dark' }}
         </button>
+
         <RouterLink
           to="/login"
           v-if="!authStore.isAuthenticated"
@@ -101,6 +102,7 @@ const filteredProducts = computed(() => {
         >
           Log Out
         </button>
+
         <RouterLink
           to="/cart"
           class="text-xs md:text-sm font-semibold tracking-widest uppercase border-b-2 border-black dark:border-white pb-1 hover:text-gray-500 dark:text-gray-300"
@@ -136,6 +138,38 @@ const filteredProducts = computed(() => {
         >
           Explore Now
         </button>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 md:px-8 mb-24 mt-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
+        <div class="order-2 md:order-1 flex flex-col justify-center">
+          <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
+            The Philosophy
+          </p>
+          <h3
+            class="text-4xl md:text-5xl font-serif font-bold mb-6 leading-tight dark:text-white text-gray-900"
+          >
+            Where Luxury<br />Meets Utility.
+          </h3>
+          <p class="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed font-light text-lg">
+            Every piece in our collection is crafted with an obsessive attention to detail. We
+            believe that true elegance is found in the perfect balance of timeless design and modern
+            functionality.
+          </p>
+          <button
+            class="self-start border-b border-black dark:border-white pb-1 text-sm font-bold uppercase tracking-widest hover:text-gray-500 transition-colors dark:text-white"
+          >
+            Discover Our Story
+          </button>
+        </div>
+        <div class="order-1 md:order-2 aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-gray-800">
+          <img
+            src="https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=2071&auto=format&fit=crop"
+            class="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
+            alt="Lookbook model"
+          />
+        </div>
       </div>
     </div>
 
@@ -180,5 +214,87 @@ const filteredProducts = computed(() => {
         <ProductCard v-for="item in filteredProducts" :key="item.id" :product="item" />
       </div>
     </div>
+
+    <footer
+      class="bg-white dark:bg-gray-950 border-t border-gray-100 dark:border-gray-900 pt-16 pb-8 mt-12"
+    >
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div class="md:col-span-2">
+            <h2
+              class="text-2xl font-serif font-black tracking-widest uppercase mb-6 dark:text-white text-gray-900"
+            >
+              E-Buy
+            </h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm max-w-sm mb-6 leading-relaxed">
+              Redefining modern elegance with sustainable practices and unparalleled craftsmanship.
+            </p>
+          </div>
+          <div>
+            <h4
+              class="text-xs font-bold uppercase tracking-widest mb-6 dark:text-gray-300 text-gray-900"
+            >
+              Shop
+            </h4>
+            <ul class="space-y-4 text-sm text-gray-500 dark:text-gray-400">
+              <li>
+                <a href="#" class="hover:text-black dark:hover:text-white transition-colors"
+                  >New Arrivals</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-black dark:hover:text-white transition-colors"
+                  >Best Sellers</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-black dark:hover:text-white transition-colors"
+                  >The Editor's Pick</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4
+              class="text-xs font-bold uppercase tracking-widest mb-6 dark:text-gray-300 text-gray-900"
+            >
+              Newsletter
+            </h4>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              Join our list for exclusive drops.
+            </p>
+            <div class="flex border-b border-gray-300 dark:border-gray-700 pb-2">
+              <input
+                type="email"
+                placeholder="Email Address"
+                class="w-full bg-transparent text-sm outline-none dark:text-white"
+              />
+              <button
+                class="text-xs font-bold uppercase tracking-widest hover:text-gray-500 dark:text-white text-black"
+              >
+                Join
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-100 dark:border-gray-900 text-xs text-gray-400"
+        >
+          <p>&copy; 2026 E-Buy. All rights reserved.</p>
+          <div class="flex gap-6 mt-4 md:mt-0">
+            <a
+              href="#"
+              class="hover:text-black dark:hover:text-white transition-colors uppercase tracking-widest"
+              >Instagram</a
+            >
+            <a
+              href="#"
+              class="hover:text-black dark:hover:text-white transition-colors uppercase tracking-widest"
+              >Twitter</a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
   </main>
 </template>
