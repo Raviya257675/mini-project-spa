@@ -1,33 +1,16 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import type { Product } from '../types'
 
-// We extend the Product type to include a "quantity" count
-export interface CartItem extends Product {
-  quantity: number
-}
-
 export const useCartStore = defineStore('cart', () => {
-  // 1. STATE: Check local storage first, otherwise start empty
-  const savedCart = localStorage.getItem('cart')
-  const items = ref<CartItem[]>(savedCart ? JSON.parse(savedCart) : [])
+  const items = ref<(Product & { quantity: number })[]>([])
+  const isDrawerOpen = ref(false) // NEW: Tracks if drawer is open
 
-  // 2. PERSISTENCE: Automatically save to local storage whenever items change
-  watch(
-    items,
-    (newItems) => {
-      localStorage.setItem('cart', JSON.stringify(newItems))
-    },
-    { deep: true },
-  )
-
-  // 3. GETTERS: Automatically calculate totals
   const totalItems = computed(() => items.value.reduce((total, item) => total + item.quantity, 0))
   const totalPrice = computed(() =>
     items.value.reduce((total, item) => total + item.price * item.quantity, 0),
   )
 
-  // 4. ACTIONS: How we modify the cart
   function addToCart(product: Product) {
     const existingItem = items.value.find((item) => item.id === product.id)
     if (existingItem) {
@@ -35,12 +18,35 @@ export const useCartStore = defineStore('cart', () => {
     } else {
       items.value.push({ ...product, quantity: 1 })
     }
+    isDrawerOpen.value = true // NEW: Automatically open drawer when adding an item!
   }
 
   function removeFromCart(productId: number) {
-    items.value = items.value.filter((item) => item.id !== productId)
+    const index = items.value.findIndex((item) => item.id === productId)
+    if (index > -1) items.value.splice(index, 1)
   }
 
-  // Expose these variables/functions to the rest of the app
-  return { items, totalItems, totalPrice, addToCart, removeFromCart }
+  function clearCart() {
+    items.value = []
+  }
+  // NEW: Drawer controls
+  function toggleDrawer() {
+    isDrawerOpen.value = !isDrawerOpen.value
+  }
+
+  function closeDrawer() {
+    isDrawerOpen.value = false
+  }
+
+  return {
+    items,
+    totalItems,
+    totalPrice,
+    isDrawerOpen,
+    addToCart,
+    removeFromCart,
+    toggleDrawer,
+    closeDrawer,
+    clearCart,
+  }
 })

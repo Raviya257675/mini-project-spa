@@ -102,13 +102,12 @@ const filteredProducts = computed(() => {
         >
           Log Out
         </button>
-
-        <RouterLink
-          to="/cart"
+        <button
+          @click="cartStore.toggleDrawer()"
           class="text-xs md:text-sm font-semibold tracking-widest uppercase border-b-2 border-black dark:border-white pb-1 hover:text-gray-500 dark:text-gray-300"
         >
           Cart ({{ cartStore.totalItems }})
-        </RouterLink>
+        </button>
       </div>
     </nav>
 
