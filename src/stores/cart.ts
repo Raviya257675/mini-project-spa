@@ -4,12 +4,31 @@ import type { Product } from '../types'
 
 export const useCartStore = defineStore('cart', () => {
   const items = ref<(Product & { quantity: number })[]>([])
-  const isDrawerOpen = ref(false) // NEW: Tracks if drawer is open
+  const isDrawerOpen = ref(false)
+
+  // --- NEW: Toast Notification State ---
+  const isToastVisible = ref(false)
+  const toastMessage = ref('')
+  let toastTimeout: ReturnType<typeof setTimeout>
 
   const totalItems = computed(() => items.value.reduce((total, item) => total + item.quantity, 0))
   const totalPrice = computed(() =>
     items.value.reduce((total, item) => total + item.price * item.quantity, 0),
   )
+
+  // NEW: Function to show the sleek notification
+  function triggerToast(productName: string) {
+    toastMessage.value = `${productName} added to your bag.`
+    isToastVisible.value = true
+
+    // Clear any existing timer so it doesn't hide too early if they click fast!
+    if (toastTimeout) clearTimeout(toastTimeout)
+
+    // Auto-hide after 3 seconds
+    toastTimeout = setTimeout(() => {
+      isToastVisible.value = false
+    }, 3000)
+  }
 
   function addToCart(product: Product) {
     const existingItem = items.value.find((item) => item.id === product.id)
@@ -18,7 +37,10 @@ export const useCartStore = defineStore('cart', () => {
     } else {
       items.value.push({ ...product, quantity: 1 })
     }
-    isDrawerOpen.value = true // NEW: Automatically open drawer when adding an item!
+
+    // CRITICAL FIX: We no longer force the drawer open!
+    // We trigger the premium toast instead:
+    triggerToast(product.title)
   }
 
   function removeFromCart(productId: number) {
@@ -29,7 +51,7 @@ export const useCartStore = defineStore('cart', () => {
   function clearCart() {
     items.value = []
   }
-  // NEW: Drawer controls
+
   function toggleDrawer() {
     isDrawerOpen.value = !isDrawerOpen.value
   }
@@ -43,6 +65,8 @@ export const useCartStore = defineStore('cart', () => {
     totalItems,
     totalPrice,
     isDrawerOpen,
+    isToastVisible, // <-- We must export this!
+    toastMessage, // <-- We must export this!
     addToCart,
     removeFromCart,
     toggleDrawer,

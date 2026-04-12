@@ -15,16 +15,28 @@ const router = createRouter({
       component: () => import('../views/ProductDetailView.vue'),
     },
     {
-      // NEW: The Cart Route
+      // The Cart Route
       path: '/cart',
       name: 'cart',
       component: () => import('../views/CartView.vue'),
     },
     {
-      // NEW: The Login Route
+      // The Login Route
       path: '/login',
       name: 'login',
       component: () => import('../views/LoginView.vue'),
+    },
+    {
+      // The Profile / Dashboard Route
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/ProfileView.vue'),
+    },
+    {
+      // NEW: The Modern Checkout Route
+      path: '/checkout',
+      name: 'checkout',
+      component: () => import('../views/CheckoutView.vue'),
     },
   ],
 })

@@ -11,11 +11,17 @@ const cartStore = useCartStore()
 const product = ref<Product | null>(null)
 const isLoading = ref(true)
 
+// NEW: State to track which image is currently being viewed
+const activeImage = ref('')
+
 onMounted(async () => {
   try {
     const response = await fetch(`https://dummyjson.com/products/${route.params.id}`)
     const data = await response.json()
     product.value = data
+
+    // NEW: Set the first image from the gallery as the active image
+    activeImage.value = data.images && data.images.length > 0 ? data.images[0] : data.thumbnail
   } catch (error) {
     console.error('Error fetching product:', error)
   } finally {
@@ -53,13 +59,35 @@ onMounted(async () => {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24">
         <div class="md:sticky md:top-8 h-max">
           <div
-            class="aspect-[4/5] w-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-8 md:p-16"
+            class="aspect-[4/5] w-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-8 md:p-16 mb-4 transition-all duration-500"
           >
             <img
-              :src="product.thumbnail"
+              :src="activeImage"
               :alt="product.title"
-              class="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal"
+              class="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal transition-opacity duration-300"
             />
+          </div>
+
+          <div
+            v-if="product.images && product.images.length > 1"
+            class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide"
+          >
+            <button
+              v-for="(img, index) in product.images"
+              :key="index"
+              @click="activeImage = img"
+              class="w-20 h-24 flex-shrink-0 bg-gray-100 dark:bg-gray-800 p-2 border-2 transition-colors duration-300"
+              :class="
+                activeImage === img
+                  ? 'border-black dark:border-white'
+                  : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600'
+              "
+            >
+              <img
+                :src="img"
+                class="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal"
+              />
+            </button>
           </div>
         </div>
 
@@ -125,3 +153,14 @@ onMounted(async () => {
     </div>
   </main>
 </template>
+
+<style scoped>
+/* Hides the scrollbar on the thumbnail strip so it looks super clean */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>

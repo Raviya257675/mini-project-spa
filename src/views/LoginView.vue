@@ -16,7 +16,7 @@ const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
 const confirmPassword = ref('')
-const username = ref('emilys') // Default DummyJSON user
+const username = ref('emilys') // Default user
 const password = ref('emilyspass')
 
 const toggleMode = () => {
@@ -24,7 +24,6 @@ const toggleMode = () => {
   errorMsg.value = ''
   successMsg.value = ''
 
-  // Reset fields when switching modes
   if (!isRegistering.value) {
     username.value = 'emilys'
     password.value = 'emilyspass'
@@ -43,16 +42,13 @@ const handleSubmit = async () => {
   successMsg.value = ''
 
   if (isRegistering.value) {
-    // 1. Check if passwords match
     if (password.value !== confirmPassword.value) {
       errorMsg.value = 'Passwords do not match. Please try again.'
       return
     }
 
-    // --- MOCK REGISTRATION FLOW ---
     successMsg.value = 'Account created successfully! Please sign in.'
 
-    // Automatically flip back to login mode after a short delay
     setTimeout(() => {
       isRegistering.value = false
       username.value = 'emilys'
@@ -62,7 +58,9 @@ const handleSubmit = async () => {
     // --- REAL LOGIN FLOW ---
     try {
       await authStore.login(username.value, password.value)
-      router.push('/')
+
+      // MAGIC HAPPENS HERE: Redirects to the new Dashboard!
+      router.push('/profile')
     } catch (error) {
       errorMsg.value = 'Invalid credentials. Please try again.'
     }

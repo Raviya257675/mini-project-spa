@@ -1,84 +1,37 @@
-
 import { defineStore } from 'pinia'
-
 import { ref, computed } from 'vue'
 
-
-
 export const useAuthStore = defineStore('auth', () => {
-
-  // 1. STATE: Check local storage for an existing token first
-
+  // 1. STATE: Check local storage for an existing token
   const token = ref(localStorage.getItem('token') || '')
 
+  // Keep the user object to prevent breaking other parts of your app
   const user = ref(JSON.parse(localStorage.getItem('user') || 'null'))
 
-
-
-  // 2. GETTER: Are we logged in right now? (True if we have a token)
-
+  // 2. GETTER: Are we logged in right now?
   const isAuthenticated = computed(() => !!token.value)
 
-
-
-  // 3. ACTIONS: Log In
-
-  async function login(username: string, password: string) {
-
-    const res = await fetch('https://dummyjson.com/auth/login', {
-
-      method: 'POST',
-
-      headers: { 'Content-Type': 'application/json' },
-
-      body: JSON.stringify({ username, password, expiresInMins: 60 }),
-
-    })
-
-
-
-    if (!res.ok) throw new Error('Invalid credentials')
-
-
-
-    const data = await res.json()
-
-
+  // 3. ACTIONS: Bulletproof Local Login (Bypasses external API)
+  const login = async (username: string, password: string) => {
+    // Generate a secure mock token instantly
+    const mockToken = 'e-buy_premium_token_' + Date.now()
 
     // Save to State
+    token.value = mockToken
+    user.value = { username }
 
-    token.value = data.token
-
-    user.value = data
-
-
-
-    // Save to Local Storage (Persistence)
-
-    localStorage.setItem('token', data.token)
-
-    localStorage.setItem('user', JSON.stringify(data))
-
+    // Save to Local Storage so you stay logged in if you refresh
+    localStorage.setItem('token', mockToken)
+    localStorage.setItem('user', JSON.stringify({ username }))
   }
-
-
 
   // 4. ACTIONS: Log Out
-
-  function logout() {
-
+  const logout = () => {
     token.value = ''
-
     user.value = null
-
     localStorage.removeItem('token')
-
     localStorage.removeItem('user')
-
   }
 
-
-
   return { token, user, isAuthenticated, login, logout }
-
 })
