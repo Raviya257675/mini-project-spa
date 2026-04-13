@@ -267,10 +267,12 @@ const clearFilters = () => {
     >
       <button
         @click="router.push('/')"
-        class="text-2xl md:text-3xl font-serif font-black tracking-widest text-gray-900 dark:text-white uppercase mb-4 lg:mb-0"
+        class="flex items-center gap-3 text-2xl md:text-3xl font-serif font-black tracking-widest text-gray-900 dark:text-white uppercase mb-4 lg:mb-0 group"
       >
-        E-Buy
+        <img src="../assets/logo.avif" alt="E-Buy Logo" class="h-8 md:h-10 w-auto object-contain transition-transform group-hover:scale-105" />
+        <span>E-Buy</span>
       </button>
+      
       <div class="flex flex-wrap items-center justify-center gap-4 md:gap-6">
         <div class="relative">
           <input
@@ -431,29 +433,44 @@ const clearFilters = () => {
     </div>
 
     <div
-      class="max-w-7xl mx-auto px-4 md:px-8 mb-24 mt-20 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center"
+      class="max-w-7xl mx-auto px-4 md:px-8 mb-24 mt-16 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-start"
     >
-      <div class="flex flex-col justify-center">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-6">
-          Our Philosophy
-        </p>
-        <h3
-          class="text-4xl md:text-5xl font-serif font-bold mb-8 leading-tight dark:text-white text-gray-900"
-        >
-          Intentional Living.
-        </h3>
-        <p
-          class="text-gray-500 dark:text-gray-400 mb-10 leading-relaxed font-light text-base md:text-lg"
-        >
-          We believe that exceptional design shouldn't be limited to one category. Whether it is the
-          fragrance that defines your space or the furniture that grounds it, our curation focuses
-          on uncompromising quality.
-        </p>
-        <button
-          class="self-start border-b border-black dark:border-white pb-1 text-xs font-bold uppercase tracking-widest hover:text-gray-500 transition-colors dark:text-white"
-        >
-          Learn More
-        </button>
+      <div class="flex flex-col justify-start -mt-12">
+        
+        <div class="mb-16">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-6">
+            Our Philosophy
+          </p>
+          <h3
+            class="text-4xl md:text-5xl font-serif font-bold mb-8 leading-tight dark:text-white text-gray-900"
+          >
+            Intentional Living.
+          </h3>
+          <p
+            class="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed font-light text-base md:text-lg"
+          >
+            We believe that exceptional design shouldn't be limited to one category. Whether it is the
+            fragrance that defines your space or the furniture that grounds it, our curation focuses
+            on uncompromising quality.
+          </p>
+          <button
+            class="self-start border-b border-black dark:border-white pb-1 text-xs font-bold uppercase tracking-widest hover:text-gray-500 transition-colors dark:text-white"
+          >
+            Learn More
+          </button>
+        </div>
+
+        <div>
+          <h3 class="text-5xl md:text-6xl font-serif italic mb-6 leading-tight dark:text-white text-gray-900 tracking-tight">
+            About Us.
+          </h3>
+          <p class="text-gray-500 dark:text-gray-400 leading-relaxed font-light text-base md:text-lg">
+            Founded on the principle of uncompromising excellence, E-Buy curates the world's finest
+            lifestyle essentials. We bridge the gap between aesthetic beauty and everyday utility,
+            delivering a seamless retail experience designed for the modern connoisseur.
+          </p>
+        </div>
+
       </div>
 
       <div class="aspect-[4/5] overflow-hidden bg-gray-100 dark:bg-gray-800 relative group z-10">
@@ -832,8 +849,9 @@ const clearFilters = () => {
       >
         <div class="md:col-span-2">
           <h2
-            class="text-2xl font-serif font-black tracking-widest uppercase mb-6 dark:text-white text-gray-900"
+            class="flex items-center justify-center md:justify-start gap-3 text-2xl font-serif font-black tracking-widest uppercase mb-6 dark:text-white text-gray-900"
           >
+            <img src="../assets/logo.avif" alt="E-Buy Logo" class="h-8 w-auto object-contain" />
             E-Buy
           </h2>
           <p class="text-gray-500 dark:text-gray-400 text-sm max-w-sm mb-6 mx-auto md:mx-0">

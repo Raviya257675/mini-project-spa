@@ -15,9 +15,8 @@ const successMsg = ref('')
 const firstName = ref('')
 const lastName = ref('')
 const email = ref('')
+const password = ref('')
 const confirmPassword = ref('')
-const username = ref('emilys') // Default user
-const password = ref('emilyspass')
 
 const toggleMode = () => {
   isRegistering.value = !isRegistering.value
@@ -25,13 +24,14 @@ const toggleMode = () => {
   successMsg.value = ''
 
   if (!isRegistering.value) {
-    username.value = 'emilys'
-    password.value = 'emilyspass'
+    // Clear fields when switching back to login
+    email.value = ''
+    password.value = ''
   } else {
+    // Clear fields when switching to register
     firstName.value = ''
     lastName.value = ''
     email.value = ''
-    username.value = ''
     password.value = ''
     confirmPassword.value = ''
   }
@@ -41,29 +41,32 @@ const handleSubmit = async () => {
   errorMsg.value = ''
   successMsg.value = ''
 
-  if (isRegistering.value) {
-    if (password.value !== confirmPassword.value) {
-      errorMsg.value = 'Passwords do not match. Please try again.'
-      return
-    }
+  try {
+    if (isRegistering.value) {
+      // 1. Check if passwords match
+      if (password.value !== confirmPassword.value) {
+        errorMsg.value = 'Passwords do not match. Please try again.'
+        return
+      }
 
-    successMsg.value = 'Account created successfully! Please sign in.'
-
-    setTimeout(() => {
-      isRegistering.value = false
-      username.value = 'emilys'
-      password.value = 'emilyspass'
-    }, 1500)
-  } else {
-    // --- REAL LOGIN FLOW ---
-    try {
-      await authStore.login(username.value, password.value)
-
-      // MAGIC HAPPENS HERE: Redirects to the new Dashboard!
+      // 2. REAL REGISTER FLOW
+      // This saves them to the browser database and automatically logs them in!
+      authStore.register(firstName.value, lastName.value, email.value, password.value)
+      
+      // 3. Redirect directly to profile
       router.push('/profile')
-    } catch (error) {
-      errorMsg.value = 'Invalid credentials. Please try again.'
+      
+    } else {
+      // 1. REAL LOGIN FLOW
+      authStore.login(email.value, password.value)
+
+      // 2. MAGIC HAPPENS HERE: Redirects to the Dashboard!
+      router.push('/profile')
     }
+  } catch (error: any) {
+    // This catches the exact errors we wrote in auth.ts 
+    // (e.g., "Invalid email or password." or "An account with this email already exists.")
+    errorMsg.value = error.message || 'An error occurred. Please try again.'
   }
 }
 </script>
@@ -112,6 +115,7 @@ const handleSubmit = async () => {
         </div>
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
+          
           <div v-if="isRegistering" class="grid grid-cols-2 gap-6 animate-fade-in">
             <div>
               <label
@@ -141,7 +145,7 @@ const handleSubmit = async () => {
             </div>
           </div>
 
-          <div v-if="isRegistering" class="animate-fade-in">
+          <div class="animate-fade-in">
             <label
               class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-2"
               >Email Address</label
@@ -157,28 +161,16 @@ const handleSubmit = async () => {
 
           <div>
             <label
-              class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-2"
-              >Username</label
+              class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-2 flex justify-between"
             >
-            <input
-              v-model="username"
-              type="text"
-              required
-              class="w-full bg-transparent border-b border-gray-300 dark:border-gray-700 py-2 text-sm focus:border-black dark:focus:border-white outline-none dark:text-white transition-colors"
-              :placeholder="isRegistering ? 'Choose a username' : 'Enter your username'"
-            />
-          </div>
-
-          <div>
-            <label
-              class="block text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-2"
-              >Password</label
-            >
+              <span>Password</span>
+              <a v-if="!isRegistering" href="#" class="hover:text-black dark:hover:text-white transition-colors border-b border-transparent hover:border-black dark:hover:border-white pb-0.5">Forgot?</a>
+            </label>
             <input
               v-model="password"
               type="password"
               required
-              class="w-full bg-transparent border-b border-gray-300 dark:border-gray-700 py-2 text-sm focus:border-black dark:focus:border-white outline-none dark:text-white transition-colors"
+              class="w-full bg-transparent border-b border-gray-300 dark:border-gray-700 py-2 text-sm focus:border-black dark:focus:border-white outline-none dark:text-white transition-colors font-mono tracking-widest"
               :placeholder="isRegistering ? 'Create a secure password' : 'Enter your password'"
             />
           </div>
@@ -192,7 +184,7 @@ const handleSubmit = async () => {
               v-model="confirmPassword"
               type="password"
               required
-              class="w-full bg-transparent border-b border-gray-300 dark:border-gray-700 py-2 text-sm focus:border-black dark:focus:border-white outline-none dark:text-white transition-colors"
+              class="w-full bg-transparent border-b border-gray-300 dark:border-gray-700 py-2 text-sm focus:border-black dark:focus:border-white outline-none dark:text-white transition-colors font-mono tracking-widest"
               placeholder="Confirm your password"
             />
           </div>
